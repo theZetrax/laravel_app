@@ -28,7 +28,8 @@ Route::resource('posts', PostsController::class)->names([
     'create' => 'posts.create',
     'show' => 'posts.view',
     'edit' => 'posts.edit',
-    'delete' => 'posts.delete',
     'index' => 'posts.index',
-    'store' => 'posts.store'
+    'store' => 'posts.store',
+    'update' => 'posts.update',
+    'destroy' => 'posts.destroy'
 ]);

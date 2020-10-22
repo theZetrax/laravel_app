@@ -7,14 +7,30 @@ use App\Models\Post;
 
 class PostsController extends Controller
 {
+    const ORDER_BY_LIST = ['created_at', 'title'];
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::orderBy('created_at', 'desc')->paginate(10);
+        $orderBy = trim($request->get('orderBy'));
+        $order = trim($request->get('order'));
+
+        # If order is not descending or ascending set descending
+        if ($order != 'asc') if ($order != 'dsec') $order = 'desc';
+
+        $posts = null; # Initializing Posts
+        if(isset($orderBy) && ($orderBy == 'created_at' || $orderBy == 'title')) 
+        {
+            $posts = Post::orderBy($orderBy, $order);
+        } else
+        {
+            $posts = Post::orderBy('created_at', $order);
+        }
+        $posts = $posts->paginate(10); # Paginate Items
+        
         return view('posts.index', ['posts' => $posts]);
     }
 
@@ -36,7 +52,18 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        return '123';
+        // Validation
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $post = new Post;
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->save();
+
+        return redirect()->route('posts.index')->with('success', 'Post Creaeted');
     }
 
     /**
@@ -48,7 +75,7 @@ class PostsController extends Controller
     public function show($id)
     {
         $post = Post::find($id);
-        return view('posts.view');
+        return view('posts.view', ['post' => $post]);
     }
 
     /**
@@ -59,7 +86,8 @@ class PostsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
@@ -71,7 +99,17 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $post = Post::find($id);
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->save();
+
+        return redirect()->route('posts.index')->with('success', "Edited $post->title post.");
     }
 
     /**
@@ -82,6 +120,9 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post_title = Post::find($id)->title;
+        Post::destroy($id);
+        
+        return redirect()->route('posts.index')->with('success', "Removed $post_title post.");
     }
 }
