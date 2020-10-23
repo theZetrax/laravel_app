@@ -23,7 +23,7 @@ Route::group([], function() {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.index');
 Route::resource('posts', PostsController::class)->names([
     'create' => 'posts.create',
     'show' => 'posts.view',

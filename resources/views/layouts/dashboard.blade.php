@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -21,7 +22,7 @@
 </head>
 <body>
     <div id="app">
-        @include('includes.navbar')
+        @include('includes.dashnav')
 
         <main class="py-4 container">
             @include('layouts.messages')

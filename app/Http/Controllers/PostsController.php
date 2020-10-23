@@ -7,7 +7,11 @@ use App\Models\Post;
 
 class PostsController extends Controller
 {
-    const ORDER_BY_LIST = ['created_at', 'title'];
+    public function __construct()
+    {
+        $this->middleware('auth')->only(['create', 'edit', 'store', 'destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,11 +31,12 @@ class PostsController extends Controller
             $posts = Post::orderBy($orderBy, $order);
         } else
         {
-            $posts = Post::orderBy('created_at', $order);
+            $orderBy = 'created_at';
+            $posts = Post::orderBy($orderBy, $order);
         }
         $posts = $posts->paginate(10); # Paginate Items
         
-        return view('posts.index', ['posts' => $posts]);
+        return view('posts.index', ['posts' => $posts, 'orderBy' => $orderBy, 'order' => $order]);
     }
 
     /**

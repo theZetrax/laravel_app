@@ -28,7 +28,7 @@
             </div>
         @endforeach
 
-        {{ $posts->links() }}
+        {{ $posts->links('paginator.default', ['orderBy' => $orderBy, 'order' => $order]) }}
     @else
         <p>No Posts Found</p>
     @endif
